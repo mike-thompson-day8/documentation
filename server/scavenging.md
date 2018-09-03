@@ -15,13 +15,26 @@ A scavenge reclaims disk space by rewriting your database chunks, minus the even
 
 Scavenges are not run automatically by Event Store. Our recommendation is that you set up a scheduled task, for example using cron or Windows Scheduler, to trigger a scavenge as often as you need.
 
-You can start a scavenge by issuing an empty `POST` to the HTTP API with the credentials of an `admin` or `ops` user :
+You can start a scavenge by issuing an empty `POST` request to the HTTP API with the credentials of an `admin` or `ops` user:
 
 ```bash
 curl -i -d {} -X POST http://localhost:2113/admin/scavenge -u "admin:changeit"
 ```
 
-You can also start scavenges from the _Admin_ page in the Admin UI.
+You can also start scavenges from the _Admin_ page of the Admin UI.
+
+> [!TIP]
+> Each node in a cluster has its own independent database. As such, when you run a scavenge, you will need to issue a scavenge request to each node.
+
+## Stopping a scavenge
+
+You stop a running scavenge operation by issuing a `DELETE` request to the HTTP API with the credentials of an `admin` or `ops` user and the ID of the scavenge you want to stop:
+
+```bash
+curl -i -X DELETE http://localhost:2113/admin/scavenge/{scavengeId} -u "admin:changeit"
+```
+
+You can also stop scavenges from the _Admin_ page of the Admin UI.
 
 > [!TIP]
 > Each node in a cluster has its own independent database. As such, when you run a scavenge, you will need to issue a scavenge request to each node.
@@ -37,4 +50,5 @@ This depends on the following:
 
 It is safe to run a scavenge while Event Store is running and processing events, it is designed to be an online operation.
 
-Keep in mind that scavenging will increase the number of reads/writes made to your disk, and it is not recommended to run it when your system is under heavy load.
+> [!ARNING]
+> Scavenging increases the number of reads/writes made to disk, and it is not recommended to run it when your system is under heavy load.
